@@ -1,5 +1,11 @@
 import SectionContainer from '@/components/SectionContainer'
 import WallpaperCard from '@/components/WallpaperCard'
+import { genPageMetadata } from 'app/seo'
+
+export const metadata = genPageMetadata({
+  title: 'Daily Wallpaper',
+  description: 'Make Your Favourite Quotes become Your Device Wallpaper Here',
+})
 
 export default function DailyWallPaperPage() {
   return (

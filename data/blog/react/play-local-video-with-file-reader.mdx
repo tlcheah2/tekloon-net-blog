@@ -1,0 +1,55 @@
+---
+title: How to Play Local Video in React with FileReader
+date: '2024-02-04'
+tags: ['programming', 'frontend', 'react']
+draft: false
+summary: 'Guides on How to Play Local Video in React'
+---
+
+## Problem
+
+Unable to play the video file that selected from my iPhone.
+
+## Use FileReader to Load Video File
+
+```tsx
+useEffect(() => {
+// 1. Get the video html element
+let uploadVideo = document.getElementById(
+    "upload_video"
+) as HTMLVideoElement;
+
+// FYI videFile is a File object that passed in as a props
+if (videoFile) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+    uploadVideo.src = e.target?.result as string;
+    };
+
+    // 2. Read the video file as data url and set the src to the video element
+    reader.readAsDataURL(videoFile);
+}
+
+if (uploadVideo) {
+    uploadVideo.autoplay = true;
+    uploadVideo.muted = true;
+    uploadVideo.loop = true;
+    uploadVideo.controls = true;
+    uploadVideo.playsInline = true;
+    uploadVideo.preload = "metadata";
+}
+});
+
+return (
+    <>
+      <video
+        width="100%"
+        height="100%"
+        id="upload_video"
+        className="object-contain"
+      ></video>
+    </> 
+)
+```
+
+I hope the above is helpful to those who seeking solution.

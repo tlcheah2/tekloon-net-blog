@@ -1,0 +1,36 @@
+---
+title: How to Add Key to React Fragment
+date: '2024-02-08'
+tags: ['programming', 'frontend', 'react']
+draft: false
+summary: 'Guides on How to Add Key to React Fragment'
+---
+
+## Problem
+
+We normally use the below syntax for a React Fragment. But we unable to add key to the React Fragment with such syntax
+
+```tsx
+<>
+    <AdditionalSectionForm />
+    <StrippedDivider className="my-10" />
+</>
+```
+
+## Use React.Fragment to wrap the children
+
+We can use `React.Fragment` to wrap the children and add the key to it.
+
+```tsx
+import { Fragment } from "react";
+
+{additionalSections.map((section, index) => (
+    <Fragment key={`additional-section-${index}`}>
+        <AdditionalSectionForm />
+        <StrippedDivider className="my-10" />
+    </Fragment>
+))}
+```
+
+
+

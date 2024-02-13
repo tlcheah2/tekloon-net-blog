@@ -1,0 +1,36 @@
+---
+title: How to Enable Multiple File Selection for HTML Input Element
+date: '2024-02-13'
+tags: ['programming', 'frontend', 'react']
+draft: false
+summary: 'Allow multiple file selection for HTML input element'
+---
+
+## Problem
+
+We could only select/upload one image file at a time with below code.
+
+```tsx
+<input
+    className="hidden"
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload}
+    ref={imagesInputRef}
+/>
+```
+
+## Solution
+
+We could enable multiple file selection by adding `multiple` attribute to the input element.
+
+```tsx
+<input
+    multiple
+    className="hidden"
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload}
+    ref={imagesInputRef}
+/>
+```

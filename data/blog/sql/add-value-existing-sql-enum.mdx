@@ -1,0 +1,25 @@
+---
+title: How to Add Value to Existing Enum in Postgres
+date: '2024-02-15'
+tags: ['programming', 'backend', 'sql', 'postgres']
+draft: false
+summary: 'Use ALTER TYPE to Add New Value to Existing Enum in Postgres'
+---
+
+## Problem
+
+We have an existing enum in Postgres and we want to add a new value to it. The existing enum looks like this:
+
+```sql
+CREATE TYPE gift_card_status_enum AS ENUM ('locked', 'unlocked');
+```
+
+The enum have two values `locked` and `unlocked`. We want to add a new value `editing` to it.
+
+## ALTER TYPE to Add New Value to Existing Enum
+
+We could easily add a new value to the existing enum using `ALTER TYPE` command. Here is how we can do it:
+
+```sql
+ALTER TYPE gift_card_status_enum ADD VALUE 'editing';
+```

@@ -1,0 +1,139 @@
+---
+title: 'Automating My Rental Property Bills with a Personal AI Assistant'
+date: '2026-02-22'
+tags: ['ai', 'automation', 'openclaw', 'personal-productivity']
+draft: false
+summary: How I stopped manually downloading utility bills and copy-pasting numbers every month — by letting my AI assistant handle it. And why the best AI projects always start with your own problems.
+---
+
+## Start With Your Own Problem
+
+There's a principle I keep coming back to when thinking about AI projects:
+
+> **The best AI project is one that solves your own problem first.**
+
+Not a hypothetical user's problem. Not a market opportunity. *Your* problem — something that currently annoys you, wastes your time, or requires repetitive effort you'd rather not do.
+
+Why? Because you deeply understand the problem. You know the edge cases. You'll actually use it. And most importantly, if it's valuable to you, there's a good chance it's valuable to others like you.
+
+This is the story of one such project.
+
+---
+
+## The Problem: Rental Property Admin is Tedious
+
+I own a rental unit at Astoria Ampang. Every month, two utility bills arrive:
+
+- A **TNB electric bill** (emailed from `billing.oms@tnb.com.my`)
+- A **Water bill** from CSS (emailed from `no-reply@csshome.info`)
+
+My workflow used to look like this:
+
+1. Log into Gmail, search for the TNB email
+2. Download the PDF attachment
+3. Rename it properly
+4. Move it to the right Dropbox folder (`Astoria B1002 Bills/YYYY-MM/`)
+5. Repeat for the water bill
+6. Open both PDFs, find the amounts
+7. Manually calculate the payout template and send it to my rental operator
+
+On the 20th of every month, I also send this message to my rental operator to request the revenue payout:
+
+```
+RM2700 x 80% = 2160.00
+Water RM56.70
+Electric RM248.40
+Internet 102.80
+
+Total Revenue for October 2025
+RM2567.90
+```
+
+This took maybe 15 minutes each month. Not much on its own — but it's exactly the kind of low-value, repetitive task that adds up and drains mental energy.
+
+---
+
+## The Solution: Let the AI Handle It
+
+I set up [OpenClaw](https://openclaw.ai) as my personal AI assistant running locally on my Mac, connected via WhatsApp. Then I automated two things:
+
+### 1. Astoria Bills Sync
+
+When I say *"sync Astoria bills"* (or it runs automatically on the 5th of each month), the assistant:
+
+1. Checks which month folders in `~/Dropbox/Astoria B1002 Bills/` are missing bills
+2. Searches Gmail for TNB electric bills (`from:billing.oms@tnb.com.my`)
+3. Searches Gmail for CSS water bills (`from:no-reply@csshome.info`)
+4. Downloads the PDF attachments directly into the correct Dropbox folder
+5. Reports back what was downloaded
+
+The key tool here is [`gog`](https://github.com/openclaw/gog) — a Google CLI that lets you interact with Gmail programmatically. The AI uses it to search threads, list attachments, and download them — all from the command line.
+
+### 2. Astoria Revenue Calculator
+
+On the 20th of every month at 9am, the assistant automatically:
+
+1. Determines which month to bill for (always 3 months prior — so January 20 → October bills)
+2. Finds the TNB and water PDFs in Dropbox for that month
+3. Extracts the bill amounts using `pdftotext`
+4. Calculates the total: `(RM2700 × 80%) + water + electric + RM102.80 internet`
+5. Formats and sends me the ready-to-forward payout message via WhatsApp
+
+The extraction uses a simple Python script that parses the PDF text and pulls out the specific amounts. Here's the core logic:
+
+```python
+def extract_tnb_amount(folder):
+    for f in os.listdir(folder):
+        if f.startswith("OPC2_") and f.endswith(".pdf"):
+            text = pdf_to_text(os.path.join(folder, f))
+            idx = text.find("Jumlah Bil Anda (RM)")
+            if idx != -1:
+                amounts = re.findall(r'(\d{1,4}\.\d{2})', text[idx:idx+200])
+                if amounts:
+                    return float(amounts[0]), f
+```
+
+Not glamorous — but it works reliably every month.
+
+---
+
+## Why This Works as an AI Project
+
+A few things made this a good fit for AI automation:
+
+**1. The data is structured but scattered**
+Gmail, PDFs, Dropbox — it's all there, just not connected. An AI assistant with the right tools can bridge these without building a custom integration.
+
+**2. The logic is simple but tedious**
+The calculation is straightforward. The hard part is the repetitive searching, downloading, and formatting — exactly what automation is good at.
+
+**3. The value is immediate and personal**
+I use this every month. I notice immediately if something breaks. That feedback loop makes the system better over time.
+
+---
+
+## The Broader Lesson
+
+I could have spent weeks building a polished web app to manage rental properties. Instead, I spent a few hours teaching my AI assistant a workflow I already do manually.
+
+The difference:
+- **Traditional approach**: Build for an imagined user, then find out if it's useful
+- **Personal AI approach**: Solve your own problem first, then decide if it's worth sharing
+
+The second approach ships faster, fails cheaper, and almost always produces something more honest and useful.
+
+Start with your own problem. Make it work for you. Everything else follows.
+
+---
+
+## Tech Stack
+
+- **OpenClaw** — personal AI assistant running locally on macOS
+- **Claude Sonnet** — the underlying model
+- **gog CLI** — Google CLI for Gmail operations
+- **pdftotext** — PDF text extraction
+- **Python** — glue for the revenue calculation script
+- **Dropbox** — cloud storage for the bills
+- **WhatsApp** — the interface I actually use daily
+
+The entire setup lives in `~/.openclaw/workspace/` — memory files, scripts, and all.

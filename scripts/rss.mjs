@@ -1,9 +1,11 @@
 import { writeFileSync, mkdirSync } from 'fs'
+import { createRequire } from 'module'
 import path from 'path'
 import GithubSlugger from 'github-slugger'
 import { escape } from 'pliny/utils/htmlEscaper.js'
 import siteMetadata from '../data/siteMetadata.js'
-import tagData from '../app/tag-data.json' assert { type: 'json' }
+const require = createRequire(import.meta.url)
+const tagData = require('../app/tag-data.json')
 import { allBlogs } from '../.contentlayer/generated/index.mjs'
 import { sortPosts } from 'pliny/utils/contentlayer.js'
 
